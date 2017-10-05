@@ -4,6 +4,8 @@ from datetime import date, datetime
 from random import random
 from time import sleep
 import sys
+from fbchat import Client
+from fbchat.models import *
 
 import config
 import tinder_api as api
@@ -13,6 +15,7 @@ class TinderBot:
     def __init__(self):
         self.fouls = 0
         self.girls = 0
+        self.client = Client('enrico_aquilina@hotmail.com', 'b7dd9aAAqwerty')
 
     '''
     This file collects important data on your matches,
@@ -186,11 +189,13 @@ class TinderBot:
             print(girls['message'])
             self.fouls += 1
         if bot.fouls < 2:
-            print('You liked %s girls, as user %s ' % (self.girls, self.user))
-            self.login_success()
+            self.client.sendMessage('You liked ' + str(self.girls) + ' girls, as user ' + str(self.user), thread_id=self.client.uid, thread_type=ThreadType.USER)
+            self.girls = 0
+            login, self.user = self.login_success()
             self.pause(10)
             self.like_matches()
         else:
+            self.client.logout()
             sys.exit(0)
 
 
