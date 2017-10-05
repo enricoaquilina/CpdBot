@@ -15,7 +15,6 @@ class TinderBot:
     def __init__(self):
         self.fouls = 0
         self.girls = 0
-        self.client = Client('enrico_aquilina@hotmail.com', 'b7dd9aAAqwerty')
 
     '''
     This file collects important data on your matches,
