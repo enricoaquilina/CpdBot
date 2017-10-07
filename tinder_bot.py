@@ -15,6 +15,7 @@ class TinderBot:
     def __init__(self):
         self.fouls = 0
         self.girls = 0
+        self.client = Client('enrico_aquilina@hotmail.com', 'b7dd9aAAqwerty')
 
     '''
     This file collects important data on your matches,
@@ -171,9 +172,13 @@ class TinderBot:
     def login_success(self):
         return api.authverif()
 
-    def like_matches(self):
+    def get_matches(self):
         print("Gathering Data on your matches...")
-        match_info = self.get_match_info()
+        return self.get_match_info()
+
+    def like_matches(self):
+        # get previous match count
+        match_count_prev = len(self.get_matches())
         girls = api.get_recommendations()
         if 'message' not in girls:
             while 'results' in girls and len(girls['results']) > 0:
@@ -187,15 +192,20 @@ class TinderBot:
         else:
             print(girls['message'])
             self.fouls += 1
-        if bot.fouls < 2:
-            self.client.sendMessage('You liked ' + str(self.girls) + ' girls, as user ' + str(self.user), thread_id=self.client.uid, thread_type=ThreadType.USER)
-            self.girls = 0
-            login, self.user = self.login_success()
-            self.pause(10)
-            self.like_matches()
-        else:
-            self.client.logout()
-            sys.exit(0)
+            if bot.fouls < 3:
+                match_count_post = len(self.get_match_info())
+
+                self.client.sendMessage('You liked ' + str(self.girls) + ' girls, '
+                                                                         'as user ' + str(self.user) +
+                                        ' and had ' + str(match_count_post-match_count_prev) + ' matches!',
+                                        thread_id=self.client.uid, thread_type=ThreadType.USER)
+                self.girls = 0
+                login, self.user = self.login_success()
+                self.pause(10)
+                self.like_matches()
+            else:
+                self.client.logout()
+                sys.exit(0)
 
 
 if __name__ == '__main__':

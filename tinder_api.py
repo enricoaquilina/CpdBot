@@ -82,9 +82,13 @@ def get_updates(last_activity_date=""):
         r = requests.post(url,
                           headers=headers,
                           data=json.dumps({"last_activity_date": last_activity_date}))
-        return r.json()
+        if r.status_code == 200:
+            return r.json()
+        else:
+            return 0
     except requests.exceptions.RequestException as e:
         print("Something went wrong with getting updates:", e)
+
 
 
 def get_self():
